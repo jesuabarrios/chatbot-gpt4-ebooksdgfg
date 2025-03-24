@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Herramienta para Crear eBooks con IA</title>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #00b0ff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    #chat {
+      max-width: 800px;
+      margin: auto;
+      background: #111;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .user {
+      background-color: #00b0ff;
+      color: #000;
+      text-align: right;
+    }
+    .bot {
+      background-color: #222;
+      color: #fff;
+      text-align: left;
+    }
+    #input-area {
+      margin-top: 20px;
+      display: flex;
+    }
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    #send-btn {
+      background-color: #e72681;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      margin-left: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Herramienta para Crear eBooks con IA</h1>
+  <div id="chat"></div>
+  <div id="input-area">
+    <input type="text" id="user-input" placeholder="Escribe tu pregunta...">
+    <button id="send-btn">Enviar</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const userInput = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    sendBtn.onclick = async () => {
+      const input = userInput.value.trim();
+      if (!input) return;
+
+      addMessage(input, "user");
+      userInput.value = "";
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input })
+      });
+
+      const data = await response.json();
+      addMessage(data.reply, "bot");
+    };
+
+    function addMessage(text, role) {
+      const msg = document.createElement("div");
+      msg.className = `message ${role}`;
+      msg.textContent = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
